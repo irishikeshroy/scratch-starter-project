@@ -5,15 +5,19 @@ import PreviewArea from "./components/PreviewArea";
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import sidebarItems from "./components/sidebarItems.json"
-import { useCallback, useState } from "react";
+import { useCallback, useState , createContext} from "react";
+
+const data = createContext();
 
 export default function App() {
 
-  const [sprites, setSprites] = useState(sidebarItems);
+  const [sprites, setSprites] = useState([{ id: 'initial-sprite', x: 0, y: 0, direction: 0, size: 100, effects: {} }]);
 
   const handleSpriteAction = useCallback((action) => {
+
+    console.log(action)
     setSprites(prevSprites => prevSprites.map(sprite => {
-      switch (action.type) {
+      switch (action.id) {
         case 'move':
           return { ...sprite, x: sprite.x + action.steps };
         case 'turnRight':
@@ -57,20 +61,23 @@ export default function App() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-
+    <data.Provider value={sidebarItems}>
     <div className="bg-blue-100 pt-6 font-sans">
       <div className="h-screen overflow-hidden flex flex-row  ">
         <div className="flex-1 h-screen overflow-hidden flex flex-row bg-white border-t border-r border-gray-200 rounded-tr-xl mr-2">
-        <Sidebar sidebarItems={sprites} onSpriteAction={handleSpriteAction} />
+        <Sidebar  onSpriteAction={handleSpriteAction} />
 
            <MidArea />
         </div>
         <div className="w-1/3 h-screen overflow-hidden flex flex-row bg-white border-t border-l border-gray-200 rounded-tl-xl rounded-tr-xl mr-2">
-        <PreviewArea sidebarItems={sprites} onSpriteAction={handleSpriteAction} />
+        <PreviewArea  onSpriteAction={handleSpriteAction} />
           </div>
       </div>
     </div>
+    </data.Provider>
 
     </DndProvider>
   );
 }
+
+export {data}

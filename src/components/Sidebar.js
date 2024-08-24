@@ -1,5 +1,6 @@
-import React ,{useState, useCallback} from "react";
+import React ,{useContext} from "react";
 import Icon from "./Icon";
+import { data } from "../App";
 // import Items from "./sidebarItems.json"
 
 // const sidebarItems = Items
@@ -32,9 +33,9 @@ const Dropdown = ({ options }) => (
 
 
 
-export default function Sidebar({sidebarItems , onSpriteAction}) {
+export default function Sidebar({ onSpriteAction}) {
 
-
+  const  sidebarItems = useContext(data)
 
 
   return (
@@ -50,9 +51,11 @@ export default function Sidebar({sidebarItems , onSpriteAction}) {
                 const actionParams = [];
                 if (item?.dropdown) actionParams.push(item.dropdown[0]);
                 if (item?.input) actionParams.push(item.input.defaultValue);
-                onSpriteAction(item?.id(...actionParams));
+                onSpriteAction(...actionParams);
               }
             }}
+
+            // onClick={() => handleAction(item)}
 
               key={item.id}
               className={`flex items-center ${section.backgroundColor} text-white px-1 py-2 my-1 rounded-lg cursor-pointer transition-shadow duration-300 ease-in-out hover:shadow-lg hover:shadow-blue-500/50`}
