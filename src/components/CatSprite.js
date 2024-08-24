@@ -1,15 +1,41 @@
-import React from "react";
+import React from 'react';
+import { useDrag } from 'react-dnd';
 
-export default function CatSprite() {
+const ItemType = 'CAT_SPRITE';
+
+export default function CatSprite({ id, left, top, direction, size, effects, visible }) {
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: ItemType,
+    item: { id, left, top },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }), [id, left, top]);
+
+  const spriteStyle = {
+    position: 'absolute',
+    left: left,
+    top: top,
+    transform: `rotate(${direction}deg) scale(${size / 100})`,
+    filter: Object.entries(effects)
+      .map(([effect, value]) => `${effect}(${value}%)`)
+      .join(' '),
+    display: visible === false ? 'none' : 'block',
+    opacity: isDragging ? 0.5 : 1,
+    cursor: 'move',
+  };
+
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="95.17898101806641"
-      height="100.04156036376953"
-      viewBox="0.3210171699523926 0.3000000357627869 95.17898101806641 100.04156036376953"
-      version="1.1"
-      xmlSpace="preserve"
-    >
+    <div ref={drag} style={spriteStyle}>
+      {/* Your SVG code here */}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="100"
+        height="100"
+        viewBox="0.3210171699523926 0.3000000357627869 95.17898101806641 100.04156036376953"
+        version="1.1"
+        xmlSpace="preserve"
+      >
       <g>
         <g id="Page-1" stroke="none" fillRule="evenodd">
           <g id="costume1">
@@ -180,5 +206,6 @@ export default function CatSprite() {
         </g>
       </g>
     </svg>
+    </div>
   );
 }

@@ -1,0 +1,153 @@
+[
+    {
+      "id": "motion",
+      "title": "Motion",
+      "backgroundColor": "bg-blue-500",
+      "items": [
+        {
+          "id": "move",
+          "content": ["move", "steps"],
+          "input": { "type": "number", "defaultValue": 10 }
+        },
+        {
+          "id": "turnRight",
+          "content": ["turn", "degrees"],
+          "icon": { "name": "redo", "size": 15, "className": "text-white mx-2" },
+          "input": { "type": "number", "defaultValue": 90 }
+        },
+        {
+          "id": "turnLeft",
+          "content": ["turn", "degrees"],
+          "icon": { "name": "undo", "size": 15, "className": "text-white mx-2" },
+          "input": { "type": "number", "defaultValue": 15 }
+        },
+        {
+          "id": "glideToRandom",
+          "content": ["glide", "secs to"],
+          "input": { "type": "number", "defaultValue": 1 },
+          "dropdown": ["random position", "mouse-pointer", "x: _ y: _"]
+        },
+        {
+          "id": "glideToXY",
+          "content": ["glide", "secs to x:", "y:"],
+          "inputs": [
+            { "type": "number", "defaultValue": 1 },
+            { "type": "number", "defaultValue": -240 },
+            { "type": "number", "defaultValue": -43 }
+          ]
+        },
+        {
+          "id": "pointInDirection",
+          "content": ["point in direction"],
+          "input": { "type": "number", "defaultValue": 90 }
+        },
+        {
+          "id": "pointTowards",
+          "content": ["point towards"],
+          "dropdown": ["mouse-pointer", "random position"]
+        },
+        {
+          "id": "changeXBy",
+          "content": ["change x by"],
+          "input": { "type": "number", "defaultValue": 10 }
+        },
+        {
+          "id": "setXTo",
+          "content": ["set x to"],
+          "input": { "type": "number", "defaultValue": -240 }
+        }
+      ]
+    },
+    {
+      "id": "looks",
+      "title": "Looks",
+      "backgroundColor": "bg-purple-500",
+      "items": [
+        {
+          "id": "sayForSeconds",
+          "content": ["say", "for", "seconds"],
+          "inputs": [
+            { "type": "text", "defaultValue": "Hello!" },
+            { "type": "number", "defaultValue": 2 }
+          ]
+        },
+        {
+          "id": "say",
+          "content": ["say"],
+          "input": { "type": "text", "defaultValue": "Hello!" }
+        },
+        {
+          "id": "thinkForSeconds",
+          "content": ["think", "for", "seconds"],
+          "inputs": [
+            { "type": "text", "defaultValue": "Hmm..." },
+            { "type": "number", "defaultValue": 2 }
+          ]
+        },
+        {
+          "id": "think",
+          "content": ["think"],
+          "input": { "type": "text", "defaultValue": "Hmm..." }
+        },
+        {
+          "id": "switchCostume",
+          "content": ["switch costume to"],
+          "dropdown": ["costume2", "costume1", "costume3"]
+        },
+        {
+          "id": "nextCostume",
+          "content": ["next costume"]
+        },
+        {
+          "id": "switchBackdrop",
+          "content": ["switch backdrop to"],
+          "dropdown": [
+            "previous backdrop",
+            "next backdrop",
+            "backdrop1"
+          ]
+        },
+        {
+          "id": "nextBackdrop",
+          "content": ["next backdrop"]
+        },
+        {
+          "id": "changeSizeBy",
+          "content": ["change size by"],
+          "input": { "type": "number", "defaultValue": 10 }
+        },
+        {
+          "id": "setSizeTo",
+          "content": ["set size to", "%"],
+          "input": { "type": "number", "defaultValue": 100 }
+        },
+        {
+          "id": "changeEffect",
+          "content": ["change", "effect by"],
+          "dropdown": [
+            "color",
+            "fisheye",
+            "whirl",
+            "pixelate",
+            "mosaic",
+            "brightness",
+            "ghost"
+          ],
+          "input": { "type": "number", "defaultValue": 25 }
+        },
+        {
+          "id": "clearGraphicEffects",
+          "content": ["clear graphic effects"]
+        },
+        {
+          "id": "show",
+          "content": ["show"]
+        },
+        {
+          "id": "hide",
+          "content": ["hide"]
+        }
+      ]
+    }
+  ]
+  
