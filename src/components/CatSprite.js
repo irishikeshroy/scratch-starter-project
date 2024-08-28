@@ -3,7 +3,27 @@ import { useDrag } from 'react-dnd';
 
 const ItemType = 'CAT_SPRITE';
 
-export default function CatSprite({ id, left, top, direction, size, effects, visible }) {
+const SpeechBubbleSVG = ({ text }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="120" height="40" viewBox="0 0 120 40">
+    <path
+      d="M10 10 Q 10 0 20 0 L 100 0 Q 110 0 110 10 L 110 30 Q 110 40 100 40 L 20 40 Q 10 40 10 30 Z"
+      fill="white"
+      stroke="#ccc"
+      strokeWidth="2"
+    />
+    <path
+      d="M10 30 L 0 40 L 10 30"
+      fill="white"
+      stroke="#ccc"
+      strokeWidth="2"
+    />
+    <text x="20" y="25" fill="#666" fontSize="15" fontFamily="Arial">
+      {text}
+    </text>
+  </svg>
+);
+
+export default function CatSprite({ id, left, top, direction, size, effects, visible, speech }) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemType,
     item: { id, left, top },
@@ -25,17 +45,27 @@ export default function CatSprite({ id, left, top, direction, size, effects, vis
     cursor: 'move',
   };
 
+  const bubbleStyle = {
+    position: 'absolute',
+    left: left + 60, // Adjust to position relative to cat
+    top: top - 60,  // Adjust to position above the cat
+    zIndex: 2,
+    pointerEvents: 'none',  // Ensure it does not interfere with dragging
+   
+  };
+
   return (
-    <div ref={drag} style={spriteStyle}>
-      {/* Your SVG code here */}
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="100"
-        height="100"
-        viewBox="0.3210171699523926 0.3000000357627869 95.17898101806641 100.04156036376953"
-        version="1.1"
-        xmlSpace="preserve"
-      >
+    <div>
+      <div ref={drag} style={spriteStyle}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="100"
+          height="100"
+          viewBox="0.3210171699523926 0.3000000357627869 95.17898101806641 100.04156036376953"
+          version="1.1"
+          xmlSpace="preserve"
+        >
+
       <g>
         <g id="Page-1" stroke="none" fillRule="evenodd">
           <g id="costume1">
@@ -206,6 +236,12 @@ export default function CatSprite({ id, left, top, direction, size, effects, vis
         </g>
       </g>
     </svg>
+    </div>
+      {speech && (
+        <div style={bubbleStyle}>
+          <SpeechBubbleSVG text= "hellko" />
+        </div>
+      )}
     </div>
   );
 }

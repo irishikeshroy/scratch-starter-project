@@ -1,28 +1,17 @@
-import React, { useState, useCallback, useEffect , useContext } from 'react';
+import React, { useCallback } from 'react';
 import { useDrop } from 'react-dnd';
 import CatSprite from './CatSprite';
-import data from "../App"
 
 const ItemType = 'CAT_SPRITE';
 
-export default function PreviewArea() {
-  const [sprites, setSprites] = useState([]);
-  const  sidebarItems = useContext(data)
-
-  useEffect(() => {
-    // Initialize with one sprite if there are none
-    if (sprites.length === 0) {
-      setSprites([{ id: 'initial-sprite', x: 0, y: 0, direction: 0, size: 100, effects: {} , visible : true }]);
-    }
-  }, []);
-
+export default function PreviewArea({ sprites, setSprites }) { // Add setSprites to the props
   const moveSprite = useCallback((id, left, top) => {
     setSprites(prevSprites =>
       prevSprites.map(sprite =>
-        sprite.id === id ? { ...sprite, x: left, y: top , } : sprite
+        sprite.id === id ? { ...sprite, x: left, y: top } : sprite
       )
     );
-  }, []);
+  }, [setSprites]);
 
   const [, drop] = useDrop(() => ({
     accept: ItemType,
