@@ -3,27 +3,53 @@ import { useDrag } from 'react-dnd';
 
 const ItemType = 'CAT_SPRITE';
 
-const SpeechBubbleSVG = ({ text }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="120" height="40" viewBox="0 0 120 40">
-    <path
-      d="M10 10 Q 10 0 20 0 L 100 0 Q 110 0 110 10 L 110 30 Q 110 40 100 40 L 20 40 Q 10 40 10 30 Z"
-      fill="white"
-      stroke="#ccc"
-      strokeWidth="2"
-    />
-    <path
-      d="M10 30 L 0 40 L 10 30"
-      fill="white"
-      stroke="#ccc"
-      strokeWidth="2"
-    />
-    <text x="20" y="25" fill="#666" fontSize="15" fontFamily="Arial">
-      {text}
-    </text>
-  </svg>
-);
+const SpeechBubbleSVG = ({ text }) => {
+  const padding = 5; // Padding around the text
+  const fontSize = 15; // Font size for the text
+  const textLength = text.length; // Length of the text
+  const bubbleWidth = Math.max(textLength * fontSize * 0.6 + padding * 2, 60); // Calculate bubble width dynamically
+  const bubbleHeight = 40; // Fixed height for the bubble
+
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width={bubbleWidth} height={bubbleHeight + 10} viewBox={`0 0 ${bubbleWidth} ${bubbleHeight + 10}`}>
+      <path
+        d={`
+          M${padding} ${padding} 
+          Q ${padding / 2} ${padding / 2} ${padding} 0 
+          L ${bubbleWidth - padding} 0 
+          Q ${bubbleWidth - padding / 2} ${padding / 2} ${bubbleWidth - padding} ${padding}
+          L ${bubbleWidth - padding} ${bubbleHeight - padding} 
+          Q ${bubbleWidth - padding / 2} ${bubbleHeight - padding / 2} ${bubbleWidth - padding * 2} ${bubbleHeight} 
+          L ${padding * 3} ${bubbleHeight} 
+          Q ${padding / 2} ${bubbleHeight - padding / 2} ${padding} ${bubbleHeight - padding}
+          L ${padding} ${padding}
+          Z
+        `}
+        fill="white"
+        stroke="#ccc"
+        strokeWidth="2"
+      />
+      <path
+        d={`
+          M${padding * 3} ${bubbleHeight}
+          L${padding * 3.5} ${bubbleHeight + 10}
+          L${padding * 4} ${bubbleHeight}
+          Z
+        `}
+        fill="white"
+        stroke="#ccc"
+        strokeWidth="2"
+      />
+      <text x={padding * 1.5} y={bubbleHeight / 2 + fontSize / 2 - 2} fill="#666" fontSize={fontSize} fontFamily="Arial">
+        {text}
+      </text>
+    </svg>
+  );
+};
 
 export default function CatSprite({ id, left, top, direction, size, effects, visible, speech }) {
+
+  console.log("effect", effects);
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemType,
     item: { id, left, top },
@@ -32,31 +58,88 @@ export default function CatSprite({ id, left, top, direction, size, effects, vis
     }),
   }), [id, left, top]);
 
-  const spriteStyle = {
-    position: 'absolute',
-    left: left,
-    top: top,
-    transform: `rotate(${direction}deg) scale(${size / 100})`,
-    filter: Object.entries(effects)
-      .map(([effect, value]) => `${effect}(${value}%)`)
-      .join(' '),
-    display: visible === false ? 'none' : 'block',
-    opacity: isDragging ? 0.5 : 1,
-    cursor: 'move',
-  };
+// Map effect names to CSS filters
+const effectToFilterMap = {
+  color: value => `hue-rotate(${value}deg)`,
+  brightness: value => `brightness(${100 + value}%)`,
+  fisheye: value => `perspective(1000px) scale(${1 + value / 100})`,
+  whirl: value => `rotate(${value}deg)`,
+  pixelate: value => `blur(${value / 10}px)`,
+  mosaic: value => `contrast(${100 + value}%)`,
+  ghost: value => `opacity(${100 - value}%)`,
+};
+
+// const appliedFilters = Object.entries(effects)
+//   .map(([effect, value]) => effectToFilterMap[effect] ? effectToFilterMap[effect](value) : null)
+//   .filter(Boolean)
+//   .join(' ');
+
+const appliedFilters = [];
+
+if (effects.whirl) {
+  appliedFilters.push('url(#whirl)');
+}
+if (effects.fisheye) {
+  appliedFilters.push('url(#fisheye)');
+}
+if (effects.pixelate) {
+  appliedFilters.push('url(#pixelate)');
+}
+if (effects.mosaic) {
+  appliedFilters.push('url(#mosaic)');
+}
+if (effects.brightness) {
+  appliedFilters.push(`brightness(${100 + effects.brightness}%)`);
+}
+if (effects.ghost) {
+  appliedFilters.push(`opacity(${100 - effects.ghost}%)`);
+}
+if (effects.color) {
+  appliedFilters.push(`hue-rotate(${effects.color}deg)`);
+}
+
+
+
+const spriteStyle = {
+  position: 'absolute',
+  left: left,
+  top: top,
+  transform: `rotate(${direction}deg) scale(${size / 100})`,
+  filter: appliedFilters.join(' '),
+  display: visible && !isDragging ? 'block' : 'none',
+  opacity: isDragging ? 0.5 : 1,
+  cursor: 'move',
+};
+
 
   const bubbleStyle = {
     position: 'absolute',
-    left: left + 60, // Adjust to position relative to cat
-    top: top - 60,  // Adjust to position above the cat
+    left: Math.max(left + 60, 10),  // Ensure the bubble does not go off the left edge
+    top: Math.max(top - 40, 10),    // Ensure the bubble does not go off the top edge
     zIndex: 2,
-    pointerEvents: 'none',  // Ensure it does not interfere with dragging
-   
+    pointerEvents: 'none',          // Ensure it does not interfere with dragging
   };
+  
+  // Adjust further if the bubble is going off the right or bottom edge of the screen
+  const screenWidth = window.innerWidth;
+  const screenHeight = window.innerHeight;
+  const bubbleWidth = bubbleStyle.width || 120;  // Assuming the width of the bubble
+  const bubbleHeight = bubbleStyle.height || 50; // Assuming the height of the bubble
+  
+  // Adjust for right edge
+  if (bubbleStyle.left + bubbleWidth > screenWidth) {
+    bubbleStyle.left = screenWidth - bubbleWidth - 10; // Ensure it stays within the screen
+  }
+  
+  // Adjust for bottom edge
+  if (bubbleStyle.top + bubbleHeight > screenHeight) {
+    bubbleStyle.top = screenHeight - bubbleHeight - 10; // Ensure it stays within the screen
+  }
+  
 
   return (
     <div>
-      <div ref={drag} style={spriteStyle}>
+      <div ref={drag}   style={spriteStyle} >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="100"
@@ -64,7 +147,36 @@ export default function CatSprite({ id, left, top, direction, size, effects, vis
           viewBox="0.3210171699523926 0.3000000357627869 95.17898101806641 100.04156036376953"
           version="1.1"
           xmlSpace="preserve"
+         
         >
+      <defs>
+          <filter id="whirl">
+            <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="3" result="turbulence"/>
+            <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="30" />
+          </filter>
+          <filter id="fisheye">
+            <feGaussianBlur stdDeviation={effects.fisheye / 10} />
+            <feComponentTransfer>
+              <feFuncA type="linear" slope="2" />
+            </feComponentTransfer>
+          </filter>
+          <filter id="pixelate">
+            <feFlood floodColor="black" result="flood" />
+            <feComposite in="SourceGraphic" in2="flood" operator="in" />
+            <feTile result="tiled" />
+            <feComposite in="tiled" in2="SourceGraphic" operator="atop" />
+            <feMorphology operator="dilate" radius={effects.pixelate / 5} />
+          </filter>
+          <filter id="mosaic">
+            <feFlood floodColor="black" result="flood" />
+            <feComposite in="SourceGraphic" in2="flood" operator="in" />
+            <feTile result="tiled" />
+            <feComposite in="tiled" in2="SourceGraphic" operator="atop" />
+            <feMorphology operator="dilate" radius="3" />
+            <feTile />
+          </filter>
+        </defs>
+
 
       <g>
         <g id="Page-1" stroke="none" fillRule="evenodd">
@@ -237,9 +349,9 @@ export default function CatSprite({ id, left, top, direction, size, effects, vis
       </g>
     </svg>
     </div>
-      {speech && (
+      {speech &&  visible &&(
         <div style={bubbleStyle}>
-          <SpeechBubbleSVG text= "hellko" />
+          <SpeechBubbleSVG text= {speech} />
         </div>
       )}
     </div>

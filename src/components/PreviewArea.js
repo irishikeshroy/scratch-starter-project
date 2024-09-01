@@ -40,6 +40,8 @@ export default function PreviewArea({ sprites, setSprites }) { // Add setSprites
           size={sprite.size}
           effects={sprite.effects}
           visible={sprite.visible}
+          speech={sprite.speech ?? sprite.thought}
+         
         />
       ))}
     </div>
